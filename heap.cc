@@ -1,15 +1,19 @@
 // Author: krems
 
 #include <vector>
+#include <stdlib.h>
+#include <iostream>
+
+using std::vector;
 
 template <typename T>
 class Heap {
-  using std::vector;
   vector<T> _data;
  public:
   Heap() {}
-  explicit Heap(T[] data) {
-    makeHeap(data);
+  template <size_t N>
+  explicit Heap(T (&data)[N]) {
+    makeHeap<N>(data);
   }
   explicit Heap(const vector<T>& data) {
     makeHeap(data);
@@ -17,12 +21,15 @@ class Heap {
 
   void makeHeap(vector<T> data) {
     _data = data;
-    heapify(0);
+    for (int i = _data.size(); i >= 0; --i) {
+      heapify(i);
+    }
   }
-  
-  void makeHeap(T[] data) {
-    _data(std::begin(data), std::end(data));
-    for (size_t i = 0 ; i < _data.size(); ++i) {
+
+  template<size_t N>
+  void makeHeap(T (&data)[N]) {
+    _data = vector<T>(data, data + N);
+    for (int i = _data.size(); i >= 0; --i) {
       heapify(i);
     }
   }
@@ -45,7 +52,7 @@ class Heap {
   T pop() {
     T tmp = _data[0];
     _data[0] = *(_data.end() - 1);
-    _data.erase(_data.cend() - 1);
+    _data.pop_back();
     heapify(0);
     return tmp;
   }
@@ -56,7 +63,7 @@ class Heap {
   void heapify(size_t vertex) {
     size_t left = 2 * vertex + 1;
     size_t right = 2 * vertex + 2;
-    if (left >= _data.size() || right >= data.size()) {
+    if (left >= _data.size() || right >= _data.size()) {
       return;
     }
     if (_data[vertex] < _data[left] || _data[vertex] < _data[right]) {
@@ -70,14 +77,13 @@ class Heap {
   }
 };
 
-template <typename T>
-void heapSort(T* array) {
-  size_t length = std::end(array) -  std::begin(array);
-  if (length == 0) {
+template <typename T, size_t N>
+void heapSort(T (&array)[N]) {
+  if (N == 0) {
     return;
   }
-  Heap heap(array);
-  for (size_t i = length - 1; i >= 0; --i) {
+  Heap<T> heap(array);
+  for (int i = N - 1; i >= 0; --i) {
     array[i] = heap.pop();
   }
 }
@@ -87,8 +93,32 @@ void heapSort(vector<T>& array) {
   if (array.size() == 0) {
     return;
   }
-  Heap heap(array);
-  for (size_t i = array.size() - 1; i >= 0; --i) {
+  Heap<T> heap(array);
+  for (int i = array.size() - 1; i >= 0; --i) {
     array[i] = heap.pop();
   }
+}
+
+int main() {
+  vector<int> arr {9, 8, 10, 99, 100, 0};
+  for (auto i = 0; i < 6; ++i) {
+    std::cout << arr[i] << " ";
+  }
+  std::cout << std::endl;
+  heapSort(arr);
+  for (auto i = 0; i < 6; ++i) {
+    std::cout << arr[i] << " ";
+  }
+  std::cout << std::endl;
+  
+  int array[] = {9, 8, 10, 99, 100, 0};
+  for (auto i = 0; i < 6; ++i) {
+    std::cout << array[i] << " ";
+  }
+  std::cout << std::endl;
+  heapSort(array);
+  for (auto i = 0; i < 6; ++i) {
+    std::cout << array[i] << " ";
+  }
+  std::cout << std::endl;
 }

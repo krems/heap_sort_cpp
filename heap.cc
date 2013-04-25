@@ -42,7 +42,7 @@ class Heap {
     _data.push_back(element);
     size_t el_position = _data.size() - 1;
     size_t parent_position = (el_position - 1) / 2;
-    while (_data[parent_position] < _data[el_position] && el_position > 0) {
+    while (el_position > 0 && _data[parent_position] < _data[el_position]) {
       std::swap(_data[parent_position], _data[el_position]);
       el_position = parent_position;
       parent_position = (el_position - 1) / 2;
